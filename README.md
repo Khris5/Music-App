@@ -1,8 +1,10 @@
-# React + Vite
+# Music App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Musium is a music app that allows you to play your favorite tracks on the go. The app is built using React and Tailwind CSS. It uses the Spotify API to fetch and play music.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Login with Spotify
+- Browse through your playlists
+- Play, pause, and skip tracks
+- See your recently played tracks
