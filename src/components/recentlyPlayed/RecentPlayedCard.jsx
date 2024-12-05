@@ -1,14 +1,17 @@
 import React from "react";
 
-const RecentPlayedCard = ({ image, title }) => {
+const RecentPlayedCard = ({ image, title, artist }) => {
   return (
-    <div className=" h-14 w-full  flex items-center gap-4 bg-[#343b3c] rounded-lg">
+    <div className="h-14 w-full flex items-center gap-2 bg-[#343b3c] rounded-lg">
       <img
         src={image}
         alt={title}
         className="w-14 h-14 object-cover rounded-lg"
       />
-      <h3 className="text-white text-sm font-bold">{title}</h3>
+      <div className="flex flex-col overflow-hidden">
+        <h3 className="text-white text-sm font-bold truncate">{title}</h3>
+        <p className="text-gray-400 text-xs truncate">{artist}</p>
+      </div>
     </div>
   );
 };

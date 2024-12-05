@@ -1,11 +1,31 @@
+import { useContext, useEffect } from "react";
 import RecentPlayedCard from "./RecentPlayedCard";
-import image from "../../assets/images/logo.png";
+import { ApiContext } from "../../ApiContext/Apicontext";
 
-const RecentlyPlayedSection = ({ data }) => {
+const RecentlyPlayedSection = () => {
+  const { recentlyPlayed, fetchRecentlyPlayed, accessToken } =
+    useContext(ApiContext);
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchRecentlyPlayed(accessToken);
+    }
+  }, [accessToken]);
+
+  if (!recentlyPlayed.length) {
+    return null;
+  }
+
   return (
     <div className="grid grid-cols-2 gap-4 mt-3">
-      <RecentPlayedCard image={image} title={"Coffee & Jazz"} />
-      <RecentPlayedCard image={image} title={"Coffee & Jazz"} />
+      {recentlyPlayed.map((track) => (
+        <RecentPlayedCard
+          key={track.id}
+          image={track.image}
+          title={track.title}
+          artist={track.artist}
+        />
+      ))}
     </div>
   );
 };

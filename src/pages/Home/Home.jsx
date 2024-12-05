@@ -72,7 +72,11 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <RecentlyPlayedSection />
+      <div className="mt-5">
+        <h2 className="text-white text-xl font-bold">Recently Played</h2>
+        <RecentlyPlayedSection />
+      </div>
+
       {/* <CategoriesSection
         title="Your Top Playlists"
         categories={userPlaylists}

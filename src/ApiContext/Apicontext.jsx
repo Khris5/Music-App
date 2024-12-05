@@ -14,8 +14,9 @@ const SCOPES = [
 export const ApiContext = createContext(null);
 
 export const ApiProvider = ({ children }) => {
-  const [userPlaylists, setUserPlaylists] = useState([]);
   const [accessToken, setAccessToken] = useState(null);
+  const [userPlaylists, setUserPlaylists] = useState([]);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
 
   useEffect(() => {
     // Check if we have a token in URL (after redirect)
@@ -122,6 +123,38 @@ export const ApiProvider = ({ children }) => {
     }
   }
 
+  const fetchRecentlyPlayed = async (token) => {
+    try {
+      const response = await fetch(
+        `${SPOTIFY_API_BASE}/me/player/recently-played?limit=6`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Recently Played:", data.items);
+      const formattedTracks = data.items.map((item) => ({
+        id: item.track.id,
+        title: item.track.name,
+        image: item.track.album.images[0]?.url,
+        artist: item.track.artists[0]?.name,
+      }));
+
+      setRecentlyPlayed(formattedTracks);
+      return formattedTracks;
+    } catch (error) {
+      console.error("Error fetching recently played:", error);
+      throw error;
+    }
+  };
+
   const logout = () => {
     setAccessToken(null);
     localStorage.removeItem("spotify_access_token");
@@ -136,6 +169,8 @@ export const ApiProvider = ({ children }) => {
         fetchUserPlaylists,
         userPlaylists,
         accessToken,
+        recentlyPlayed,
+        fetchRecentlyPlayed,
       }}
     >
       {children}
