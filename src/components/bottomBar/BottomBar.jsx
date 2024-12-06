@@ -3,7 +3,7 @@ import { NavLink } from "react-router";
 const BottomBar = () => {
   return (
     <div className="absolute bottom-0 left-0 right-0  h-40  bg-gradient-to-b from-transparent to-black flex flex-col justify-end">
-      <div className="flex items-center justify-between py-2 px-6">
+      <div className="flex items-center justify-between py-2 px-6 font-poppins">
         <NavLink
           to="/home"
           className="flex flex-col items-center justify-center text-white cursor-pointer text-sm"

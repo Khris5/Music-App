@@ -6,6 +6,7 @@ export default {
       fontFamily: {
         didact: ["Didact Gothic", "sans-serif"],
         mulish: ["Mulish", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },

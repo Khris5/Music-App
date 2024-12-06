@@ -9,8 +9,8 @@ const RecentPlayedCard = ({ image, title, artist }) => {
         className="w-14 h-14 object-cover rounded-lg"
       />
       <div className="flex flex-col overflow-hidden">
-        <h3 className="text-white text-sm font-bold truncate">{title}</h3>
-        <p className="text-gray-400 text-xs truncate">{artist}</p>
+        <h3 className="text-white text-sm  font-poppins truncate">{title}</h3>
+        <p className="text-gray-400 text-xs truncate font-didact">{artist}</p>
       </div>
     </div>
   );

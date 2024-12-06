@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
 const CLIENT_ID = "ba02a3d235664a32807977c86d12a7fd";
-const REDIRECT_URI = "http://localhost:5173/callback"; // Update with your redirect URI
+const REDIRECT_URI = "http://localhost:5173/callback";
 const SCOPES = [
   "playlist-read-private",
   "playlist-read-collaborative",
@@ -17,6 +17,7 @@ export const ApiProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [userPlaylists, setUserPlaylists] = useState([]);
   const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
     // Check if we have a token in URL (after redirect)
@@ -145,6 +146,7 @@ export const ApiProvider = ({ children }) => {
         title: item.track.name,
         image: item.track.album.images[0]?.url,
         artist: item.track.artists[0]?.name,
+        artistId: item.track.artists[0]?.id,
       }));
 
       setRecentlyPlayed(formattedTracks);
@@ -155,6 +157,63 @@ export const ApiProvider = ({ children }) => {
     }
   };
 
+  const fetchRecommendations = async (token) => {
+    try {
+      // Predefined genre pairs for each mix
+      const genrePairs = [
+        ["pop", "dance"],
+        ["hip-hop", "rap"],
+        ["rock", "alternative"],
+        ["indie", "electronic"],
+        ["jazz", "blues"],
+      ];
+
+      // First, get seed tracks from recently played
+      const recentTracks = await fetchRecentlyPlayed(token);
+      const seedTrack = recentTracks[0]?.id; // Use first recent track as seed
+      const seedArtists = recentTracks[0]?.artistId;
+
+      // Create 5 different mixes with different genres
+      const mixes = await Promise.all(
+        genrePairs.map(async (genres, index) => {
+          const response = await fetch(
+            `${SPOTIFY_API_BASE}/recommendations?limit=20&seed_artists=${seedArtists}&seed_genres=${genres.join(
+              ","
+            )}&seed_tracks=${seedTrack}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Recommendations:", data);
+          return {
+            id: `daily-mix-${index + 1}`,
+            title: `Daily Mix ${index + 1}`,
+            description: `Based on ${genres.join(" & ")}`,
+            tracks: data.tracks.map((track) => ({
+              id: track.id,
+              title: track.name,
+              artist: track.artists[0].name,
+              image: track.album.images[0]?.url,
+              preview_url: track.preview_url,
+            })),
+            image: data.tracks[0]?.album.images[0]?.url,
+          };
+        })
+      );
+
+      setRecommendations(mixes);
+      return mixes;
+    } catch (error) {
+      console.error("Error fetching recommendations:", error);
+      throw error;
+    }
+  };
   const logout = () => {
     setAccessToken(null);
     localStorage.removeItem("spotify_access_token");
@@ -171,6 +230,8 @@ export const ApiProvider = ({ children }) => {
         accessToken,
         recentlyPlayed,
         fetchRecentlyPlayed,
+        recommendations,
+        fetchRecommendations,
       }}
     >
       {children}

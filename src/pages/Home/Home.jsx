@@ -13,13 +13,15 @@ const Home = () => {
     fetchUserPlaylists,
     initiateSpotifyLogin,
     accessToken,
+    fetchRecentlyPlayed,
+    fetchRecommendations,
   } = useContext(ApiContext);
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadPlaylists = async () => {
+    const loadData = async () => {
       try {
         setIsLoading(true);
         if (!accessToken && !window.location.hash.includes("access_token")) {
@@ -27,12 +29,15 @@ const Home = () => {
           return;
         }
         if (accessToken) {
-          await fetchUserPlaylists(accessToken);
+          await Promise.all([
+            fetchUserPlaylists(accessToken),
+            fetchRecentlyPlayed(accessToken),
+            // fetchRecommendations(accessToken),
+          ]);
         }
       } catch (err) {
         setError(err.message);
         if (err.message.includes("401")) {
-          // Token might be expired
           localStorage.removeItem("spotify_access_token");
           initiateSpotifyLogin();
         }
@@ -41,7 +46,7 @@ const Home = () => {
       }
     };
 
-    loadPlaylists();
+    loadData();
   }, [accessToken]);
 
   if (isLoading) return <div>Loading...</div>;
@@ -77,10 +82,7 @@ const Home = () => {
         <RecentlyPlayedSection />
       </div>
 
-      {/* <CategoriesSection
-        title="Your Top Playlists"
-        categories={userPlaylists}
-      /> */}
+      <CategoriesSection title="Recommended for you" />
       {/* <div className="flex flex-col gap-5 mt-5">
         <h1 className="text-white text-xl font-bold">Top Songs</h1>
         {data.map((song, index) => {
