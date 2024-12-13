@@ -14,7 +14,6 @@ const Home = () => {
     initiateSpotifyLogin,
     accessToken,
     fetchRecentlyPlayed,
-    fetchRecommendations,
   } = useContext(ApiContext);
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +31,6 @@ const Home = () => {
           await Promise.all([
             fetchUserPlaylists(accessToken),
             fetchRecentlyPlayed(accessToken),
-            // fetchRecommendations(accessToken),
           ]);
         }
       } catch (err) {
@@ -82,7 +80,7 @@ const Home = () => {
         <RecentlyPlayedSection />
       </div>
 
-      <CategoriesSection title="Recommended for you" />
+      <CategoriesSection title="Top Playlists" />
       {/* <div className="flex flex-col gap-5 mt-5">
         <h1 className="text-white text-xl font-bold">Top Songs</h1>
         {data.map((song, index) => {
